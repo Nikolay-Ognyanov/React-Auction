@@ -1,29 +1,39 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import * as service from "../service"
-import * as userActions from "../features/user"
-import * as usersActions from "../features/users"
-import * as localUser from "../localUser"
+import * as service from "../util/service" // Importing service functions
+import * as userActions from "../features/user" // Importing user-related actions
+import * as usersActions from "../features/users" // Importing users-related actions
+import * as localUser from "../util/localUser" // Importing local user utility
 
 export function Auth() {
-    const initialState = { username: "", password: "" }
+    const dispatch = useDispatch() // Redux dispatch function
+    const navigate = useNavigate() // Navigation function
+    
+    const initialState = { username: "", password: "" } // Initial form state
+    
+    // State variables
+    const [inputs, setInputs] = useState(initialState) // Form input values
+    const [errors, setErrors] = useState({ ...initialState, server: "" }) // Form validation errors
+    const [isRegistering, setIsRegistering] = useState(true) // Flag for registration/login mode
 
-    const [inputs, setInputs] = useState(initialState)
-    const [errors, setErrors] = useState({ ...initialState, server: "" })
-
+    // Function to handle input changes
     function handleInputChange(event) {
         const { name, value } = event.target
 
+        // Update input values and clear server error
         setInputs({ ...inputs, [name]: value })
         setErrors({ ...errors, server: "" })
 
+        // Validate input
         validateInput(event)
     }
 
+    // Function to validate input fields
     function validateInput(event) {
         const { name, value } = event.target
 
+        // Update validation errors
         setErrors(state => {
             const stateObject = { ...state, [name]: "" }
 
@@ -41,19 +51,17 @@ export function Auth() {
         })
     }
 
-    const [isRegistering, setIsRegistering] = useState(true)
-
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-
+    // Function to handle form submission
     async function handleSubmit(event) {
         event.preventDefault()
 
         const formData = Object.fromEntries(new FormData(event.target))
 
+        // Check for empty input fields
         if (!Object.values(formData).some(v => !v.trim())) {
             let response = null
 
+            // Perform registration or login based on mode
             if (isRegistering) {
                 response = await service.register({
                     ...formData,
@@ -61,6 +69,7 @@ export function Auth() {
                     wonAuctions: []
                 })
 
+                // If username is taken, try to login
                 if (response?.message === "Username is taken.") {
                     response = await service.login(formData)
                 }
@@ -68,27 +77,33 @@ export function Auth() {
                 response = await service.login(formData)
             }
 
+            // If successful response, update user data
             if (response && !response.message) {
+                // Ensure user has minimum wallet balance
                 if (response.wallet <= 0) {
                     response = { ...response, wallet: 10000 }
-
                     await service.updateUser(response)
                 }
 
+                // Save user data locally
                 localUser.set(response)
 
+                // Update user data in Redux store
                 dispatch(userActions.setUser(response))
 
+                // Fetch all users and update Redux store
                 const { users } = await service.readUsers()
-
                 dispatch(usersActions.setUsers(users))
 
+                // If current user not in the list, add to Redux store
                 if (users.length > 0 && !users.find(u => u._id === response._id)) {
                     dispatch(usersActions.addUser(response))
                 }
 
+                // Redirect to home page
                 navigate("/")
             } else if (response && response.message) {
+                // If response contains an error message, display it
                 setErrors(state => ({ ...state, server: response.message }))
             }
         }
@@ -96,6 +111,7 @@ export function Auth() {
 
     return (
         <div className="auth">
+            {/* Authentication form */}
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
@@ -115,6 +131,7 @@ export function Auth() {
                     onBlur={validateInput}
                 />
 
+                {/* Render registration/login buttons if no errors */}
                 {
                     !Object.values(errors).some(entry => entry !== "") &&
                     !Object.values(inputs).some(entry => entry === "") &&
@@ -126,6 +143,7 @@ export function Auth() {
                 }
             </form>
 
+            {/* Display validation errors */}
             <div className="errorsWrapper">
                 {errors.username && <p className="error">{errors.username}</p>}
                 {errors.password && <p className="error">{errors.password}</p>}

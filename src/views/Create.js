@@ -1,33 +1,38 @@
-import { useNavigate } from "react-router-dom"
-import { useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import * as service from "../service"
-import * as userActions from "../features/user"
-import * as usersActions from "../features/users"
-import * as auctionsActions from "../features/auctions"
-import * as localUser from "../localUser"
+import { useNavigate } from "react-router-dom" // Importing navigation hook
+import { useState } from "react" // Importing state hook
+import { useSelector, useDispatch } from "react-redux" // Importing Redux hooks
+import * as service from "../util/service" // Importing service functions
+import * as userActions from "../features/user" // Importing user-related actions
+import * as usersActions from "../features/users" // Importing users-related actions
+import * as auctionsActions from "../features/auctions" // Importing auctions-related actions
+import * as localUser from "../util/localUser" // Importing local user utility
 
 export function Create() {
-    const user = useSelector(state => state.user?.value)
+    const user = useSelector(state => state.user?.value) // Fetching user data from Redux store
 
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const dispatch = useDispatch() // Redux dispatch function
+    const navigate = useNavigate() // Navigation function
 
-    const [inputs, setInputs] = useState({ name: "", price: "" })
-    const [errors, setErrors] = useState({ name: "", price: "", server: "" })
+    const [inputs, setInputs] = useState({ name: "", price: "" }) // State for input values
+    const [errors, setErrors] = useState({ name: "", price: "", server: "" }) // State for input validation errors
 
+    // Function to handle input changes
     function handleInputChange(event) {
         const { name, value } = event.target
 
+        // Update input values and clear server error
         setInputs({ ...inputs, [name]: value })
         setErrors({ ...errors, server: "" })
 
+        // Validate input
         validateInput(event)
     }
 
+    // Function to validate input fields
     function validateInput(event) {
         const { name, value } = event.target
 
+        // Update validation errors
         setErrors(state => {
             const stateObject = { ...state, [name]: "" }
 
@@ -47,49 +52,54 @@ export function Create() {
         })
     }
 
+    // Function to handle auction creation
     async function handleSave(event) {
         event.preventDefault()
 
         const { name, price } = Object.fromEntries(new FormData(event.target))
 
-        const expirationTime = Date.now() + 5 * 60 * 1000
-        const deposit = Math.ceil(price / 20)
+        const expirationTime = Date.now() + 5 * 60 * 1000 // Auction expiration time (5 minutes)
+        const deposit = Math.ceil(price / 20) // Deposit amount based on price
 
         const auction = {
             name,
             price,
             deposit,
             expirationTime,
-            ownerId: user._id
+            ownerId: user._id // Owner ID from user data
         }
 
-        const response = await service.createAuction(auction)
+        const response = await service.createAuction(auction) // Creating auction via service function
 
         if (!response.message) {
-            const walletToBeUpdated = user.wallet - deposit
+            const walletToBeUpdated = user.wallet - deposit // Updating wallet balance
 
             const userToBeUpdated = {
                 ...user,
                 wallet: walletToBeUpdated,
-                createdAuctions: [...user.createdAuctions, response._id]
+                createdAuctions: [...user.createdAuctions, response._id] // Adding auction to user's created auctions
             }
 
-            await service.updateUser(userToBeUpdated)
+            await service.updateUser(userToBeUpdated) // Updating user data via service function
 
-            localUser.set({ ...user, wallet: walletToBeUpdated })
+            localUser.set({ ...user, wallet: walletToBeUpdated }) // Updating local user data
 
+            // Dispatching actions to update Redux store
             dispatch(userActions.setUser(userToBeUpdated))
             dispatch(usersActions.updateUser(userToBeUpdated))
             dispatch(auctionsActions.updateAuction(auction))
 
+            // Redirecting to home page
             navigate("/")
         } else {
+            // If response contains an error message, display it
             setErrors({ ...errors, server: response.message })
         }
     }
 
     return (
         <section>
+            {/* Auction creation form */}
             <form onSubmit={handleSave}>
                 <input
                     type="text"
@@ -109,6 +119,7 @@ export function Create() {
                     onBlur={validateInput}
                 />
 
+                {/* Render save and reset buttons if no errors and user has sufficient balance */}
                 {
                     !Object.values(errors).some(entry => entry !== "") &&
                     !Object.values(inputs).some(entry => entry === "") &&
@@ -124,6 +135,7 @@ export function Create() {
                 }
             </form>
 
+            {/* Display validation errors */}
             <div className="errorsWrapper">
                 {errors.name && <p className="error">{errors.name}</p>}
                 {errors.price && <p className="error">{errors.price}</p>}

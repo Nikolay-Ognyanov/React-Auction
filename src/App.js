@@ -3,13 +3,13 @@ import { Routes, Route } from "react-router-dom"
 import { Auth } from "./views/Auth"
 import { Auction } from "./views/Auction"
 import { Nav } from "./views/Nav"
-import { Guard } from "./Guard"
+import { Guard } from "./util/Guard"
 import { Create } from "./views/Create"
 import { Profile } from "./views/Profile"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import * as userActions from "./features/user"
-import * as localUser from "./localUser"
+import * as localUser from "./util/localUser"
 
 export default function App() {
 	const dispatch = useDispatch()
