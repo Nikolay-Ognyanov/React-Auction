@@ -130,31 +130,40 @@ export function Auction() {
                 dispatch(auctionsActions.deleteAuction(auction._id))
             })
 
-            // Apply sorting criteria if such exists
+            // Apply sorting criteria if it exists in local storage
             if (localUser.get("sortingCriteria")) {
+                // Extract sorting criteria from local storage
                 const [name, order] = localUser.get("sortingCriteria")
 
+                // Set active button based on sorting criteria
                 setActiveButton(name)
 
+                // Dispatch action to set auctions after sorting
                 dispatch(auctionsActions.setAuctions(sortAuctions(auctions, name, order)))
             } else {
+                // If no sorting criteria exists, dispatch action to set auctions without sorting
                 dispatch(auctionsActions.setAuctions(auctions))
             }
         }
 
         fetchAuctions()
 
-        // Filter auctions based on search input
+        // Define a function to filter auctions based on search input
         function searchFilter(auctions) {
+            // Check if there are auctions
             if (auctions) {
+                // Check if there is a search input
                 if (searchInput) {
+                    // Filter auctions based on search input
                     const searchResult = auctions.filter(auction => {
-                        return auction.name.includes(searchInput)   
+                        return auction.name.includes(searchInput)
                     })
 
+                    // Flatten the search result array
                     return searchResult.flat()
                 }
 
+                // Return all auctions if no search input is provided
                 return auctions
             }
         }
@@ -204,33 +213,49 @@ export function Auction() {
 
     // Function to render bid button
     function renderBidButton(auction) {
+        // Check if the user is not the highest bidder, not the owner, and has enough funds to bid
         if (
             user._id !== auction.highestBidderId &&
             user._id !== auction.ownerId &&
             user.wallet >= auction.price
         ) {
-            return <button className="cardButton"
-                onClick={() => handleBid(auction._id, auction.price)}
-            >Bid</button>
+            // Render bid button
+            return (
+                <button className="cardButton"
+                    onClick={() => handleBid(auction._id, auction.price)}
+                >
+                    Bid
+                </button>
+            )
         }
     }
 
     // Function to handle bidding
     async function handleBid(auctionId, price) {
+        // Calculate the next price based on the current bid
         const nextPrice = calculateNextPrice(price)
+
+        // Find the auction details from the server
         const auctionFromServer = auctions.find(a => a._id === auctionId)
+
+        // Find the previous bidder details
         const previousBidder = users.find(u => u._id === auctionFromServer.highestBidderId)
 
+        // If there was a previous bidder
         if (previousBidder) {
+            // Prepare data to update the previous bidder's wallet
             const previousBidderToBeRepaid = {
                 ...previousBidder,
                 wallet: previousBidder.wallet + auctionFromServer.lastBid
             }
 
+            // Update the previous bidder's wallet in the database
             await service.updateUser(previousBidderToBeRepaid)
+            // Update the previous bidder's data in the Redux store
             dispatch(usersActions.updateUser(previousBidderToBeRepaid))
         }
 
+        // Prepare data to update the auction details
         const auctionToBeUpdated = {
             ...auctionFromServer,
             price: nextPrice,
@@ -240,6 +265,7 @@ export function Auction() {
             lastBid: auctionFromServer.price,
         }
 
+        // Function to update the bid auctions list of the current user
         function updateBidAuctions() {
             if (user.bidAuctions.includes(auctionId)) {
                 return user.bidAuctions
@@ -248,44 +274,61 @@ export function Auction() {
             }
         }
 
+        // Prepare data to update the current user's wallet and bid auctions list
         const highestBidderToBeUpdated = {
             ...user,
             wallet: user.wallet - Math.ceil(price),
             bidAuctions: updateBidAuctions()
         }
 
+        // Update the auction details in the database
         await service.updateAuction(auctionId, auctionToBeUpdated)
+        // Update the current user's data in the database
         await service.updateUser(highestBidderToBeUpdated)
 
+        // Update the current user's data in the Redux store
         dispatch(userActions.setUser(highestBidderToBeUpdated))
+        // Update the current user's data in the Redux store
         dispatch(usersActions.updateUser(highestBidderToBeUpdated))
+        // Update the auction details in the Redux store
         dispatch(auctionsActions.updateAuction(auctionToBeUpdated))
     }
 
+
     // Function to handle auction cancellation
     async function handleCancel(auctionId) {
+        // Find the auction with the provided ID
         const auction = auctions.find(a => a._id === auctionId)
 
+        // If the auction exists
         if (auction) {
+            // Find the highest bidder of the auction
             const highestBidder = users.find(u => u._id === auction.highestBidderId)
 
+            // If there is a highest bidder
             if (highestBidder) {
+                // Calculate the amount to be repaid to the highest bidder
                 const highestBidderToBeRepaid = {
                     ...highestBidder,
                     wallet: highestBidder.wallet + auction.price
                 }
 
+                // Update the highest bidder's wallet
                 await service.updateUser(highestBidderToBeRepaid)
 
+                // If the current user is the highest bidder, update their information
                 if (user._id === highestBidderToBeRepaid._id) {
                     dispatch(userActions.setUser(highestBidderToBeRepaid))
                 }
 
+                // Update the highest bidder's information in the Redux store
                 dispatch(usersActions.updateUser(highestBidderToBeRepaid))
             }
 
+            // Delete the auction from the server
             await service.deleteAuction(auctionId)
 
+            // Delete the auction from the Redux store
             dispatch(auctionsActions.deleteAuction(auctionId))
         }
     }
