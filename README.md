@@ -15,8 +15,8 @@ The Online Auction App is a web application that allows users to participate in 
 
 ## Installation
 
-1. Clone the repository: `git clone <repository-url>`
-2. Navigate to the project directory: `cd online-auction-app`
+1. Clone the repository: `git clone https://github.com/Nikolay-Petrov-Ognyanov/React-Auction`
+2. Navigate to the project directory: `cd react-auction`
 3. Install dependencies: `npm install`
 4. Start the development server: `npm start`
 5. Open the app in your browser: `http://localhost:3000`
