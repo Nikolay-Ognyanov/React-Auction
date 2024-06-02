@@ -149,9 +149,7 @@ export function Auction() {
             if (auctions) {
                 if (searchInput) {
                     const searchResult = auctions.filter(auction => {
-                        return searchInput.split("").some(character => {
-                            return auction.name.includes(character)
-                        })
+                        return auction.name.includes(searchInput)   
                     })
 
                     return searchResult.flat()
