@@ -51,6 +51,11 @@ export function Auth() {
         })
     }
 
+    // Function to clear the server error completely
+    function clearServerError() {
+        setErrors(state => ({ ...state, server: "" }))
+    }
+
     // Function to handle form submission
     async function handleSubmit(event) {
         event.preventDefault()
@@ -131,8 +136,9 @@ export function Auth() {
                     onBlur={validateInput}
                 />
 
-                {/* Render registration/login buttons if no errors */}
+                {/* Render registration/login buttons only if there are no errors at all */}
                 {
+                    !errors.server &&
                     !Object.values(errors).some(entry => entry !== "") &&
                     !Object.values(inputs).some(entry => entry === "") &&
 
@@ -143,11 +149,19 @@ export function Auth() {
                 }
             </form>
 
-            {/* Display validation errors */}
+            {/* Display validation errors and the OK button under the server error */}
             <div className="errorsWrapper">
                 {errors.username && <p className="error">{errors.username}</p>}
                 {errors.password && <p className="error">{errors.password}</p>}
-                {errors.server && <p className="error">{errors.server}</p>}
+                
+                {errors.server && (
+                    <>
+                        <p className="error">{errors.server}</p>
+                        <div className="buttonsWrapper" style={{ marginTop: "10px" }}>
+                            <button type="button" onMouseDown={clearServerError}>OK</button>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )

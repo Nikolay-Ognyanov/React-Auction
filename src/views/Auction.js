@@ -201,14 +201,16 @@ export function Auction() {
 
     // Function to calculate next bid price
     function calculateNextPrice(price) {
-        let nextPrice = Math.round(price / 5) * 5 + 5
+        // let nextPrice = Math.round(price / 5) * 5 + 5
 
-        if (price >= 100 && price < 200) nextPrice = Math.round(price / 10) * 10 + 10
-        if (price >= 200 && price < 500) nextPrice = Math.round(price / 10) * 10 + 20
-        if (price >= 500 && price < 1000) nextPrice = Math.round(price / 10) * 10 + 50
-        if (price >= 1000) nextPrice = price + 100
+        // if (price >= 100 && price < 200) nextPrice = Math.round(price / 10) * 10 + 10
+        // if (price >= 200 && price < 500) nextPrice = Math.round(price / 10) * 10 + 20
+        // if (price >= 500 && price < 1000) nextPrice = Math.round(price / 10) * 10 + 50
+        // if (price >= 1000) nextPrice = price + 100
 
-        return nextPrice
+        // return nextPrice
+
+        return Math.round(price * 1.1)
     }
 
     // Function to render bid button

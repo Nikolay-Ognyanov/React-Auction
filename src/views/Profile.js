@@ -77,42 +77,42 @@ export function Profile() {
         const won = user.wonAuctions.length && `won ${user.wonAuctions.length}`
 
         // Filter out any falsey values from the stats array
-        let array = [created, sold, bid, won].filter((entry) => entry !== 0)
+        let stats_array = [created, sold, bid, won].filter((entry) => entry !== 0)
 
         // Format the statistics for display
-        if (array[0]) {
-            const word = array[0][0].toUpperCase() + array[0].slice(1)
-            const auction = array[0].slice(-1) === "1" ? " auction" : " auctions"
+        if (stats_array[0]) {
+            const word = stats_array[0][0].toUpperCase() + stats_array[0].slice(1)
+            const auction = stats_array[0].slice(-1) === "1" ? " auction" : " auctions"
             const string = word + auction
 
-            array.splice(0, 1, string)
+            stats_array.splice(0, 1, string)
         }
 
-        if (array.length > 1) {
-            const string = ` and ${array[array.length - 1]}`
+        if (stats_array.length > 1) {
+            const string = ` and ${stats_array[stats_array.length - 1]}`
 
-            array.splice(array.length - 1, 1, string)
+            stats_array.splice(stats_array.length - 1, 1, string)
         }
 
-        if (array.length > 2) {
-            for (let i = 0; i < array.length - 2; i++) {
-                array[i] = array[i] && array[i] + ", "
+        if (stats_array.length > 2) {
+            for (let i = 0; i < stats_array.length - 2; i++) {
+                stats_array[i] = stats_array[i] && stats_array[i] + ", "
             }
         }
 
-        array[array.length - 1] = array[array.length - 1] + "."
+        stats_array[stats_array.length - 1] = stats_array[stats_array.length - 1] + "."
 
         // Render the statistics in a formatted way
-        if (array.length === 4) {
+        if (stats_array.length === 4) {
             return (
                 <>
-                    <p>{array[0]} {array[1]}</p>
-                    <p>{array[2]} {array[3]}</p>
+                    <p>{stats_array[0]} {stats_array[1]}</p>
+                    <p>{stats_array[2]} {stats_array[3]}</p>
                 </>
             )
         }
 
-        return <p>{array}</p>
+        return <p>{stats_array}</p>
     }
 
     // Render the profile section with user data and form for transactions
