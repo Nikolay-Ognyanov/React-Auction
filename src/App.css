@@ -1,20 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@800&display=swap');
-
 :root {
 	--color: rgb(132, 0, 255)
 }
-
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
 }
-
 input[type=number] {
 	appearance: textfield;
 	-moz-appearance: textfield;
 }
-
 .App {
 	font-family: Inconsolata;
 	font-size: 4vw;
@@ -24,7 +20,6 @@ input[type=number] {
 	justify-content: center;
 	width: 100vw;
 }
-
 .App * {
 	text-align: center;
 	background-color: black;
@@ -33,7 +28,6 @@ input[type=number] {
 	border-radius: 4vw;
 	outline: none;
 }
-
 nav {
 	width: 100vw;
 	display: flex;
@@ -42,14 +36,12 @@ nav {
 	margin: 2vw 0;
 	height: 6vw;
 }
-
 h1 {
 	height: 9vw;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
-
 .auth {
 	margin-top: 2vw;
 	width: 100%;
@@ -57,19 +49,16 @@ h1 {
 	align-items: center;
 	flex-direction: column;
 }
-
 .auth form {
 	height: 50%;
 	display: flex;
 	flex-direction: column;
 	gap: 2vw;
 }
-
 input {
 	border: 0.5vw solid;
 	width: 47vw;
 }
-
 button,
 .button {
 	min-width: 22.5vw;
@@ -82,7 +71,6 @@ button,
 	justify-content: center;
 	align-items: center;
 }
-
 button:hover,
 .button:hover {
 	cursor: pointer;
@@ -90,30 +78,25 @@ button:hover,
 	border-color: var(--color);
 	color: black;
 }
-
 .active {
 	background-color: var(--color);
 	border-color: var(--color);
 	color: black;
 }
-
 .buttonsWrapper {
 	display: flex;
 	justify-content: space-around;
 	gap: 2vw;
 }
-
 .errorsWrapper {
 	margin-top: 1vw;
 	font-size: 4vw;
 }
-
 section {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
-
 form {
 	margin-top: 2vw;
 	display: flex;
@@ -121,7 +104,6 @@ form {
 	align-items: center;
 	gap: 2vw;
 }
-
 .auctionCard {
 	display: flex;
 	justify-content: space-between;
@@ -132,34 +114,28 @@ form {
 	font-size: 4vw;
 	margin-bottom: 1vw;
 }
-
 .cardInfo {
 	display: flex;
 	width: calc((96vw - 22.5vw));
 }
-
 .cardInfo > * {
 	width: 22.5vw;
 	margin-right: 2vw;
 }
-
 .cardButton {
 	border: none;
 }
-
 .search {
 	width: 96vw;
 	margin-bottom: 2vw;
 	margin-top: 0.5vw;
 }
-
 header {
 	width: 96vw;
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 2vw;
 }
-
 .profile {
 	display: flex;
 	flex-direction: column;
@@ -167,14 +143,12 @@ header {
 	align-items: center;
 	height: calc(100vh - 10vw);
 }
-
 .renderUserStats {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 }
-
 .transactionWrapper {
 	display: flex;
 	gap: 2vw;

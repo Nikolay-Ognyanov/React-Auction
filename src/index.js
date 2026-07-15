@@ -9,7 +9,6 @@ import { Provider } from 'react-redux'
 import { userReducer } from './features/user'
 import { usersReducer } from './features/users'
 import { auctionsReducer } from './features/auctions'
-
 const store = configureStore({
 	reducer: {
 		user: userReducer,
@@ -17,9 +16,7 @@ const store = configureStore({
 		auctions: auctionsReducer
 	}
 })
-
 const root = ReactDOM.createRoot(document.getElementById('root'))
-
 root.render(
 	<BrowserRouter>
 		<Provider store={store}>
@@ -27,8 +24,7 @@ root.render(
 		</Provider>
 	</BrowserRouter>
 )
-
-// If you want to start measuring performance in your app, pass a function
+// If you want to start measuring performance in your app, pass a function.
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals()

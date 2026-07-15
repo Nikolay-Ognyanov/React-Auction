@@ -3,7 +3,6 @@
 *::after {
   box-sizing: border-box;
 }
-
 body,
 h1,
 h2,
@@ -16,18 +15,15 @@ dl,
 dd {
   margin: 0;
 }
-
 ul[role='list'],
 ol[role='list'] {
   list-style: none;
   padding: 0px;
   margin: 0px;
 }
-
 html:focus-within {
   scroll-behavior: smooth;
 }
-
 body {
   font-family: Arial, sans-serif;
   font-weight: bold;
@@ -37,17 +33,14 @@ body {
   background-color: black;
   display: flex;
 }
-
 a:not([class]) {
   text-decoration-skip-ink: auto;
 }
-
 img,
 picture {
   max-width: 100%;
   display: block;
 }
-
 input,
 button,
 textarea,
